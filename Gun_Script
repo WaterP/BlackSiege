@@ -1,0 +1,129 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.UI;
+
+public class Gun_Script : MonoBehaviour {
+
+    public float damage = 10f;
+    public float range = 100f;
+    public float impactForce = 30f;
+    public float fireRate = 15f;
+    public AudioSource gun;
+
+    public int maxAmmo = 10;
+    private int currentAmmo;
+    public float reloadTime = 1f;
+    private bool isReloading = false;
+    public Animator animator;
+    public bool auto = true;
+    public float shootTime = .30f;
+    public bool shooting = false;
+    public bool reloading = false;
+    public Text ammo;
+    public float Maxhealth = 100f;
+    public Text Health;
+    public float health = 100f;
+    public Slider healthBar;
+
+    public Camera fpsCam;
+
+    private float nextTimeToFire = 0f;
+
+    void Start()
+    {
+        currentAmmo = maxAmmo;
+        ammo.text = "Ammo : " + currentAmmo + "/" + maxAmmo;
+        Health.text = "Health : " + health + "/" + Maxhealth;
+        healthBar.value = health;
+    }
+
+    void OnEnable()
+    {
+        isReloading = false;
+        animator.SetBool("isReloading", false);
+        animator.SetBool("Shooting", false);
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        Health.text = "Health : " + health + "/" + Maxhealth;
+        ammo.text = "Ammo : " + currentAmmo + "/" + maxAmmo;
+        if (Input.GetKeyDown("b"))
+        {
+            if (auto == true)
+                auto = false;
+            else
+                auto = true;
+        }
+        if (Input.GetKeyDown("r") && currentAmmo < maxAmmo)
+        {
+            StartCoroutine(Reload());
+            return;
+        }
+
+        if (isReloading)
+            return;
+        if (Input.GetButton("Fire1") && Time.time >= nextTimeToFire && auto == true)
+        {
+            nextTimeToFire = Time.time + 1f / fireRate;
+            Shoot();
+        }
+
+        if (Input.GetButtonDown("Fire1") && Time.time >= nextTimeToFire && auto == false)
+        {
+            nextTimeToFire = Time.time + 1f / fireRate;
+            Shoot();
+        }
+
+        if (shooting == true)
+        {
+            StartCoroutine(Shooting());
+        }
+    }
+    
+
+    IEnumerator Shooting ()
+    {
+        animator.SetBool("Shooting", true);
+        yield return new WaitForSeconds(shootTime);
+        animator.SetBool("Shooting", false);
+    }
+
+    IEnumerator Reload ()
+    {
+        animator.SetBool("Shooting", false);
+        isReloading = true;
+        animator.SetBool("isReloading", true);
+        yield return new WaitForSeconds(reloadTime - .25f);
+
+        animator.SetBool("isReloading", false);
+
+        yield return new WaitForSeconds(.25f);
+
+        currentAmmo = maxAmmo;
+        isReloading = false;
+    }
+
+    void Shoot ()
+    {
+        currentAmmo--;
+        gun.Play();
+        shooting = true;
+        RaycastHit hit;
+        if (Physics.Raycast(fpsCam.transform.position, fpsCam.transform.forward, out hit, range))
+        {
+            Debug.Log(hit.transform.name);
+
+
+
+            Target target = hit.transform.GetComponent<Target>();
+            if (target != null)
+            {
+                target.TakeDamage(damage);
+                hit.rigidbody.AddForce(-hit.normal * impactForce);
+            }
+        }
+    }
+}
