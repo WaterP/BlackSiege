@@ -7,6 +7,7 @@ public class Grenade : MonoBehaviour {
 	public gameobject Grenade_Object;
 	public float hold_time;
 	Public text frag_amount;
+	Public float grenade_type;
   
 	/*void Start () {
 	
@@ -16,7 +17,16 @@ public class Grenade : MonoBehaviour {
 	void Update() {
   if (Input.GetKeyDown("h"))
   {
-  
+  startcouratine(Hold())
   }
+	}
+	
+	Ienumerator Hold ()
+	{
+	if (type = 4)
+	{
+	Holding = true;
+	Impact = true;
+	}
 	}
 }
