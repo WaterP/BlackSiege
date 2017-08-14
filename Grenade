@@ -1,0 +1,22 @@
+using UnityEngine;
+using System.Collections;
+using UnityEngine.UI;
+
+public class Grenade : MonoBehaviour {
+
+	public gameobject Grenade_Object;
+	public float hold_time;
+	Public text frag_amount;
+  
+	/*void Start () {
+	
+	}*/
+	
+	// Update is called once per frame
+	void Update() {
+  if (Input.GetKeyDown("h"))
+  {
+  
+  }
+	}
+}
