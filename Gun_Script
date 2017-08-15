@@ -33,8 +33,8 @@ public class Gun_Script : MonoBehaviour {
     void Start()
     {
         currentAmmo = maxAmmo;
-        ammo.text = "Ammo : " + currentAmmo + "/" + maxAmmo;
-        Health.text = "Health : " + health + "/" + Maxhealth;
+        ammo.text = currentAmmo + "/" + maxAmmo;
+        Health.text = health;
         healthBar.value = health;
     }
 
@@ -93,7 +93,6 @@ public class Gun_Script : MonoBehaviour {
 
     IEnumerator Reload ()
     {
-        animator.SetBool("Shooting", false);
         isReloading = true;
         animator.SetBool("isReloading", true);
         yield return new WaitForSeconds(reloadTime - .25f);
